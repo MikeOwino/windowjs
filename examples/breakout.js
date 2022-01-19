@@ -1036,7 +1036,7 @@ function draw(timestamp) {
   const scale = window.width / WIDTH;
   canvas.scale(scale, scale);
 
-  canvas.fillStyle = '#ff00ffff';
+  canvas.fillStyle = '#000000ff';
   canvas.fillRect(0, 0, WIDTH, HEIGHT);
 
   shakeScreen(timestamp);
