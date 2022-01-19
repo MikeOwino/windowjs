@@ -121,6 +121,7 @@ void TextureShader::DrawTexture(GLuint texture, float sw, float sh, float dx,
   } else {
     glDisable(GL_BLEND);
   }
+
   glUseProgram(program_);
   glUniform2f(glGetUniformLocation(program_, "TexOffset"), dx, dy);
   glUniform2f(glGetUniformLocation(program_, "TexScale"), sw, sh);
@@ -128,5 +129,9 @@ void TextureShader::DrawTexture(GLuint texture, float sw, float sh, float dx,
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture);
   glDrawArrays(GL_TRIANGLES, 0, 6);
+
+  // Note: this fixes https://github.com/windowjs/windowjs/issues/35.
+  glBindTexture(GL_TEXTURE_2D, 0);
+
   glEnable(GL_BLEND);
 }

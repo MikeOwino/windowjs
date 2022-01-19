@@ -9,8 +9,8 @@ canvas.fillStyle = 'red';
 canvas.clearRect(0, 0, 600, 600);
 
 canvas.fillStyle = '#ff0000ff';
-canvas.fillStyle = '#ff000080';
 canvas.fillRect(0, 0, 300, 300);
+canvas.fillStyle = '#ff000080';
 canvas.fillRect(300, 300, 300, 300);
 
 // This is also transparent.
