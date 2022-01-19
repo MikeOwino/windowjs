@@ -47,29 +47,6 @@ void main() {
 }
 )";
 
-const char kClearVertex[] = R"(
-#version 330 core
-
-in vec2 aPos;
-
-uniform vec2 TexOffset;
-uniform vec2 TexScale;
-
-void main() {
-  gl_Position = vec4(aPos * TexScale + TexOffset, 0, 1.0);
-}
-)";
-
-const char kClearFragment[] = R"(
-#version 330 core
-
-out vec4 FragColor;
-
-void main() {
-  FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-}
-)";
-
 }  // namespace
 
 GLuint CompileShader(GLuint type, const char* source) {
@@ -128,28 +105,12 @@ TextureShader::TextureShader() {
   glDeleteShader(vertex);
   glDeleteShader(fragment);
   ASSERT_NO_GL_ERROR();
-
-  vertex = CompileShader(GL_VERTEX_SHADER, kClearVertex);
-  fragment = CompileShader(GL_FRAGMENT_SHADER, kClearFragment);
-  clear_program_ = LinkShaders(vertex, fragment);
-  glDeleteShader(vertex);
-  glDeleteShader(fragment);
-  ASSERT_NO_GL_ERROR();
 }
 
 TextureShader::~TextureShader() {
   glDeleteProgram(program_);
-  glDeleteProgram(clear_program_);
   glDeleteBuffers(1, &vbo_);
   glDeleteVertexArrays(1, &vao_);
-}
-
-void TextureShader::Clear(float sw, float sh, float dx, float dy) {
-  glUseProgram(clear_program_);
-  glUniform2f(glGetUniformLocation(clear_program_, "TexOffset"), dx, dy);
-  glUniform2f(glGetUniformLocation(clear_program_, "TexScale"), sw, sh);
-  glBindVertexArray(vao_);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 void TextureShader::DrawTexture(GLuint texture, float sw, float sh, float dx,
@@ -158,7 +119,7 @@ void TextureShader::DrawTexture(GLuint texture, float sw, float sh, float dx,
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA,
                         GL_DST_ALPHA);
   } else {
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_BLEND);
   }
   glUseProgram(program_);
   glUniform2f(glGetUniformLocation(program_, "TexOffset"), dx, dy);
@@ -167,4 +128,5 @@ void TextureShader::DrawTexture(GLuint texture, float sw, float sh, float dx,
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture);
   glDrawArrays(GL_TRIANGLES, 0, 6);
+  glEnable(GL_BLEND);
 }

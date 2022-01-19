@@ -120,8 +120,9 @@ Window::Window(Delegate* delegate, int width, int height)
   retina_scale_ = (float) width_ / window_width;
 
   glEnable(GL_BLEND);
-  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glDisable(GL_DEPTH_TEST);
   glViewport(0, 0, width_, height_);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   ASSERT_NO_GL_ERROR();
 
@@ -206,13 +207,12 @@ void Window::RenderAndSwapBuffers() {
 
   SetCurrentContext(window_);
 
-  // TODO: figure why this is needed on some machines and not others.
-  // Clearing the color buffer doesn't seem to actually do anything;
-  // but if one of the overlays is shown then it works as expected.
-  // Seems like a bug in the GL driver?
-  // Or a sync issue with the target texture passed as the Skia backend?
-  texture_shader_->Clear(1, 1, 0, 0);
-  // glClear(GL_COLOR_BUFFER_BIT);
+  // Clear the framebuffer on every frame with the default color (opaque black).
+  // The canvas texture is copied, not blended, into this framebuffer.
+  glDisable(GL_BLEND);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+  glEnable(GL_BLEND);
 
   float sw = (float) canvas_->GetWidthForDraw() / width_;
   float sh = (float) canvas_->GetHeightForDraw() / height_;

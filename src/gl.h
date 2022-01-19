@@ -11,8 +11,6 @@ class TextureShader {
   TextureShader();
   ~TextureShader();
 
-  void Clear(float sw, float sh, float dx, float dy);
-
   // Draws the given texture directly to normalized device coordinates,
   // which is [-1, 1] for the X, Y and Z axes.
   // Use the scaling factors (sw, sh) and offsets (dx, dy) to position the
@@ -22,7 +20,6 @@ class TextureShader {
 
  private:
   GLuint program_;
-  GLuint clear_program_;
   GLuint vao_;
   GLuint vbo_;
 };
